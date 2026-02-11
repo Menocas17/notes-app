@@ -1,0 +1,10 @@
+#to ignore dependencies from both folders: backend and frontend
+node_modules/
+dist/
+.env
+
+#to ignore system files
+.DS_Store
+
+#to ignore vs code config
+.vscode/
