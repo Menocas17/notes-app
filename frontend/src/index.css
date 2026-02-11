@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #ffd330;
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --background: #242424;
+    --text-color: rgba(255, 255, 255, 0.87);
+
+    background-color: var(--background);
+    color: var(--text-color);
+  }
+
+  /* Light mode */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background: #ffffff;
+      --text-color: #213547;
+    }
+  }
+}
