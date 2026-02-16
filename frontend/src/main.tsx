@@ -3,11 +3,15 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import { AuthProvider } from './context/AuthProvider.tsx';
+import { Suspense } from 'react';
+import LoadingSpinner from './components/LoadingSpinner.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <Suspense fallback={<LoadingSpinner />}>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </Suspense>
   </StrictMode>,
 );

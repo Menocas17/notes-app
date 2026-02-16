@@ -9,7 +9,6 @@ export interface User {
 
 export interface AuthContextType {
   user: User | null;
-  loading: boolean;
   login: (token: string) => Promise<void>;
   logout: () => void;
 }
