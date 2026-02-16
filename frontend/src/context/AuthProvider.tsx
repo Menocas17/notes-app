@@ -1,62 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import { useState, use, useMemo, type ReactNode } from 'react';
 import { AuthContext, type User } from './AuthContext';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { fetchMe } from '../services/auth.service';
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+// Helper to check session on initial load
+async function checkInitialSession(): Promise<User | null> {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  return fetchMe(token);
+}
 
-  const [loading, setLoading] = useState<boolean>(() => {
-    const token = localStorage.getItem('token');
-    return !!token;
-  });
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [userPromise] = useState(() => checkInitialSession());
+  const initialUser = use(userPromise);
 
-  useEffect(() => {
-    const checkUserSession = async () => {
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.ok) {
-          const userData: User = await res.json();
-          setUser(userData);
-        } else {
-          localStorage.removeItem('token');
-          setUser(null);
-        }
-      } catch (error) {
-        console.error(error);
-        localStorage.removeItem('token');
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkUserSession();
-  }, []);
+  const [user, setUser] = useState<User | null>(initialUser);
 
   async function login(token: string) {
     localStorage.setItem('token', token);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) {
-        const userData: User = await res.json();
-        setUser(userData);
-      }
-    } catch (e) {
-      console.error(e);
-      localStorage.removeItem('token');
+    const userData = await fetchMe(token);
+    if (userData) {
+      setUser(userData);
     }
   }
 
@@ -65,9 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {!loading ? children : <LoadingSpinner />}
-    </AuthContext.Provider>
-  );
+  const value = useMemo(() => ({ user, login, logout }), [user]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
