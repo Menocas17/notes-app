@@ -58,7 +58,7 @@ export default function MyNotes() {
           <select
             value={filters.tag}
             onChange={(e) => setFilters({ tag: e.target.value })}
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 dark:bg-[#1a1a1a] dark:border-primary dark:placeholder-gray-400 dark:text-white outline-none appearance-none '
+            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 dark:bg-[#1a1a1a] dark:border-primary dark:placeholder-gray-400 dark:text-white outline-none appearance-none pr-8'
           >
             <option value=''>All Tags</option>
             {allUniqueTags.map((tagName) => (
