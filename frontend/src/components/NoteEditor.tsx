@@ -116,10 +116,7 @@ export default function NoteEditor({ initialData }: { initialData: Notes }) {
     <section className='mb-5 mt-8 '>
       <div className='mb-10 flex justify-between border-b pb-4'>
         <div className='flex gap-4 md:gap-20 items-center flex-1'>
-          <Link
-            className='font-bold text-2xl hover:text-yellow-600 dark:hover:text-primary cursor-pointer'
-            to={'/myNotes'}
-          >
+          <Link className='font-bold text-2xl  cursor-pointer' to={'/myNotes'}>
             ←
           </Link>
           <div className='flex items-center gap-2'>

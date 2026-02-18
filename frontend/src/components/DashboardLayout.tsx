@@ -11,9 +11,9 @@ export default function DashboarLayout() {
   };
 
   return (
-    <div className='max-w-[90%] lg:max-w-3/5 m-auto'>
+    <div className='max-w-[90%] lg:max-w-5/6 m-auto'>
       <header className='flex flex-col mt-4 md:mt-10'>
-        <div className='flex gap-4 justify-between items-center'>
+        <div className='flex gap-4 justify-between items-center pb-6 border-b'>
           <div className='flex items-center gap-4'>
             <img
               src={user?.picture}
@@ -34,32 +34,36 @@ export default function DashboarLayout() {
           </button>
         </div>
 
-        <nav className='mt-8 mb-4 flex  gap-5 min-[413px]:gap-6 md:gap-20 justify-center bg-gray-100 dark:bg-[#3b3e3f] border border-gray-200 dark:border-[#202122] rounded-2xl py-2 font-bold md:max-w-4/5 m-auto px-5'>
-          <NavLink
-            to='/myNotes'
-            className={({ isActive }) =>
-              `hover:text-[#8D7315] dark:hover:text-primary ${isActive ? 'text-[#8D7315] dark:text-primary' : ''}`
-            }
-          >
-            My notes
-          </NavLink>
-          <NavLink
-            to='archivedNotes'
-            className={({ isActive }) =>
-              `hover:text-[#8D7315] dark:hover:text-primary ${isActive ? 'text-[#8D7315] dark:text-primary' : ''}`
-            }
-          >
-            Archived Notes
-          </NavLink>
+        {/* bg-[#3b3e3f] */}
+
+        <div className='flex flex-wrap items-center justify-center mt-10 mb-5 gap-3'>
+          <nav className='  flex  gap-5 min-[413px]:gap-6 md:gap-8 justify-center bg-gray-100 dark:bg-transparent border border-gray-200 dark:border-gray-500 rounded-2xl py-3 font-bold md:max-w-4/5 px-5'>
+            <NavLink
+              to='/myNotes'
+              className={({ isActive }) =>
+                ` ${isActive ? 'border-b-2 border-gray-600 dark:border-primary' : ''}`
+              }
+            >
+              My notes
+            </NavLink>
+            <NavLink
+              to='archivedNotes'
+              className={({ isActive }) =>
+                ` ${isActive ? 'border-b-2 border-gray-600 dark:border-primary' : ''}`
+              }
+            >
+              Archived Notes
+            </NavLink>
+          </nav>
           <NavLink
             to='createNote'
-            className={({ isActive }) =>
-              `hover:text-[#8D7315] dark:hover:text-primary ${isActive ? 'text-[#8D7315] dark:text-primary' : ''}`
+            className={
+              'bg-yellow-200 border border-gray-200 dark:border-gray-400 text-black rounded-2xl py-2 px-3 font-bold transition-transform duration-300 hover:scale-103'
             }
           >
             Create Note
           </NavLink>
-        </nav>
+        </div>
       </header>
       <main>
         <Outlet />

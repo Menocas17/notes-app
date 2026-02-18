@@ -80,7 +80,7 @@ export default function MyNotes() {
         </div>
       </div>
 
-      <section className='grid grid-cols-[repeat(auto-fit,minmax(200px,300px))] gap-6 justify-center'>
+      <section className='grid grid-cols-[repeat(auto-fit,minmax(100px,300px))] gap-6 justify-center'>
         {filteredNotes.map((note) => (
           <Link
             to={`/myNotes/${note.id}`}
