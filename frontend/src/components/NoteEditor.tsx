@@ -113,7 +113,7 @@ export default function NoteEditor({ initialData }: { initialData: Notes }) {
   };
 
   return (
-    <section className='mb-5 mt-8 '>
+    <section className='mb-5 mt-8 md:max-w-3/5 m-auto'>
       <div className='mb-10 flex justify-between border-b pb-4'>
         <div className='flex gap-4 md:gap-20 items-center flex-1'>
           <Link className='font-bold text-2xl  cursor-pointer' to={'/myNotes'}>
