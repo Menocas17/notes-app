@@ -8,7 +8,7 @@ export interface User {
 }
 
 export interface AuthContextType {
-  user: User | null;
+  user: User | null | undefined;
   login: (token: string) => Promise<void>;
   logout: () => void;
 }

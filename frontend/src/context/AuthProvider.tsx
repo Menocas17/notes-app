@@ -1,34 +1,45 @@
-import { useState, use, useMemo, type ReactNode } from 'react';
-import { AuthContext, type User } from './AuthContext';
+import { useCallback, useMemo, type ReactNode } from 'react';
+import { AuthContext } from './AuthContext';
 import { fetchMe } from '../services/auth.service';
-
-// Helper to check session on initial load
-async function checkInitialSession(): Promise<User | null> {
-  const token = localStorage.getItem('token');
-  if (!token) return null;
-  return fetchMe(token);
-}
+import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [userPromise] = useState(() => checkInitialSession());
-  const initialUser = use(userPromise);
+  const queryClient = useQueryClient();
+  const token = localStorage.getItem('token');
 
-  const [user, setUser] = useState<User | null>(initialUser);
+  const { data: user } = useSuspenseQuery({
+    queryKey: ['session'],
+    queryFn: async () => {
+      if (!token) return;
+      return await fetchMe(token);
+    },
 
-  async function login(token: string) {
-    localStorage.setItem('token', token);
-    const userData = await fetchMe(token);
-    if (userData) {
-      setUser(userData);
-    }
-  }
+    staleTime: Infinity,
+  });
 
-  const logout = () => {
+  const login = useCallback(
+    async (newToken: string) => {
+      localStorage.setItem('token', newToken);
+      try {
+        const userData = await fetchMe(newToken);
+        if (userData) {
+          queryClient.setQueryData(['session'], userData);
+        }
+      } catch (error) {
+        console.error('Login fallido', error);
+        localStorage.removeItem('token');
+      }
+    },
+    [queryClient],
+  );
+
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
-    setUser(null);
-  };
+    queryClient.setQueryData(['session'], null);
+    queryClient.removeQueries();
+  }, [queryClient]);
 
-  const value = useMemo(() => ({ user, login, logout }), [user]);
+  const value = useMemo(() => ({ user, login, logout }), [user, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
