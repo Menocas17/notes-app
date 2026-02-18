@@ -1,19 +1,12 @@
 import { type User } from '../context/AuthContext';
+import api from '../lib/axios';
 
-export async function fetchMe(token: string): Promise<User | null> {
+export async function fetchMe(): Promise<User | null> {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/users/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!res.ok) {
-      localStorage.removeItem('token');
-      return null;
-    }
-
-    return await res.json();
+    const { data } = await api.get<User>('/users/me');
+    return data;
   } catch (error) {
-    console.error('Auth request failed:', error);
+    console.error('Auth request failed', error);
     localStorage.removeItem('token');
     return null;
   }
