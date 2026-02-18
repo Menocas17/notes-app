@@ -54,18 +54,30 @@ export default function MyNotes() {
   return (
     <section className='mt-1'>
       <div className='flex justify-center mb-5'>
-        <select
-          value={filters.tag}
-          onChange={(e) => setFilters({ tag: e.target.value })}
-          className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 dark:bg-[#1a1a1a] dark:border-primary dark:placeholder-gray-400 dark:text-white outline-none'
-        >
-          <option value=''>All Tags</option>
-          {allUniqueTags.map((tagName) => (
-            <option key={tagName} value={tagName}>
-              #{tagName}
-            </option>
-          ))}
-        </select>
+        <div className='relative full'>
+          <select
+            value={filters.tag}
+            onChange={(e) => setFilters({ tag: e.target.value })}
+            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 dark:bg-[#1a1a1a] dark:border-primary dark:placeholder-gray-400 dark:text-white outline-none appearance-none '
+          >
+            <option value=''>All Tags</option>
+            {allUniqueTags.map((tagName) => (
+              <option key={tagName} value={tagName}>
+                #{tagName}
+              </option>
+            ))}
+          </select>
+
+          <div className='pointer-events-none absolute inset-y-0 -right-2 flex items-center pr-3'>
+            <svg
+              className='h-5 w-5 fill-current text-gray-900 dark:text-white'
+              viewBox='0 0 50 50'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <path d='M25 32.4l-9.7-9.7 1.4-1.4 8.3 8.3 8.3-8.3 1.4 1.4z' />
+            </svg>
+          </div>
+        </div>
       </div>
 
       <section className='grid grid-cols-[repeat(auto-fit,minmax(200px,300px))] gap-6 justify-center'>

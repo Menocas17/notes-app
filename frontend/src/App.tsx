@@ -7,6 +7,9 @@ import MyNotes from './pages/MyNotesPage';
 import EditNote from './pages/EditNotePage';
 import ArchiveNotes from './pages/ArchivedNotesPage';
 import CreateNote from './pages/CreateNotePage';
+import { AuthProvider } from './context/AuthProvider.tsx';
+import { Suspense } from 'react';
+import LoadingSpinner from './components/LoadingSpinner.tsx';
 
 function App() {
   return (
@@ -17,7 +20,15 @@ function App() {
         <Route path='/auth/callback' element={<AuthCallback />} />
 
         {/* Protected */}
-        <Route element={<ProtectedRoute />}>
+        <Route
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AuthProvider>
+                <ProtectedRoute />
+              </AuthProvider>
+            </Suspense>
+          }
+        >
           <Route element={<DashboarLayout />}>
             <Route path='/myNotes' element={<MyNotes />} />
             <Route path='/archivedNotes' element={<ArchiveNotes />} />

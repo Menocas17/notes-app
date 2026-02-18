@@ -2,16 +2,22 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
-import { AuthProvider } from './context/AuthProvider.tsx';
-import { Suspense } from 'react';
-import LoadingSpinner from './components/LoadingSpinner.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 100 * 60 * 5,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Suspense fallback={<LoadingSpinner />}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </Suspense>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   </StrictMode>,
 );
