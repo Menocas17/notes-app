@@ -22,7 +22,7 @@ export class AuthController {
 
     const token = result.access_token;
 
-    const frontendUrl = `http://localhost:5173/auth/callback?token=${token}`;
+    const frontendUrl = `https://notes-app-frontend-j8kt.onrender.com/auth/callback?token=${token}`;
 
     return res.redirect(frontendUrl);
   }
