@@ -1,35 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import api from '../lib/axios';
 import { type Notes } from '../types/types';
 
 export default function useNotes(activeNotes: boolean) {
-  const [notes, setNotes] = useState<Notes[]>([]);
-  const [loading, setLoading] = useState(false);
+  const queryKey = ['notes', { type: activeNotes ? 'active' : 'archived' }];
+  const endpoint = activeNotes ? '/notes' : '/notes/archived';
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const fetcNotes = async () => {
-      try {
-        setLoading(true);
-        const endpoint = activeNotes ? 'notes' : 'notes/archived';
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/${endpoint}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  const { data: notes = [] } = useSuspenseQuery({
+    queryKey,
+    queryFn: async () => {
+      const { data } = await api.get<Notes[]>(endpoint);
+      return data;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
 
-        if (!res.ok) throw new Error('could not fetch the notes, try again');
-
-        const notesData: Notes[] = await res.json();
-
-        setNotes(notesData);
-      } catch (e) {
-        console.error('error fetching the notes', e);
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetcNotes();
-  }, [activeNotes]);
-
-  return { notes, setNotes, loading };
+  return { notes };
 }

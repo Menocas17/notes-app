@@ -1,11 +1,10 @@
 import Note from '../components/Note';
 import { Link } from 'react-router-dom';
 import useNotes from '../hooks/useNotes';
-import NoteSkeleton from '../components/NoteSkeleton';
 import { useState, useMemo } from 'react';
 
 export default function MyNotes() {
-  const { notes, loading } = useNotes(true);
+  const { notes } = useNotes(true);
   const [filters, setFilters] = useState({
     tag: '',
   });
@@ -24,16 +23,6 @@ export default function MyNotes() {
 
     return matchesTag;
   });
-
-  if (loading) {
-    return (
-      <section className='grid grid-cols-[repeat(auto-fit,minmax(200px,300px))] gap-6 justify-center mt-6'>
-        {Array.from({ length: 6 }).map((_, index) => (
-          <NoteSkeleton key={index} edit={false} />
-        ))}
-      </section>
-    );
-  }
 
   if (notes.length === 0) {
     return (

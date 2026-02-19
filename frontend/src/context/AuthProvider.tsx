@@ -10,8 +10,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: user } = useSuspenseQuery({
     queryKey: ['session'],
     queryFn: async () => {
-      if (!token) return;
-      return await fetchMe(token);
+      if (!token) return null;
+      return await fetchMe();
     },
 
     staleTime: Infinity,
@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (newToken: string) => {
       localStorage.setItem('token', newToken);
       try {
-        const userData = await fetchMe(newToken);
+        const userData = await fetchMe();
         if (userData) {
           queryClient.setQueryData(['session'], userData);
         }
