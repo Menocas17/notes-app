@@ -10,6 +10,7 @@ import CreateNote from './pages/CreateNotePage';
 import { AuthProvider } from './context/AuthProvider.tsx';
 import { Suspense } from 'react';
 import LoadingSpinner from './components/LoadingSpinner.tsx';
+import GridNoteSkeleton from './components/NotesGridSkeleton.tsx';
 
 function App() {
   return (
@@ -30,8 +31,23 @@ function App() {
           }
         >
           <Route element={<DashboarLayout />}>
-            <Route path='/myNotes' element={<MyNotes />} />
-            <Route path='/archivedNotes' element={<ArchiveNotes />} />
+            <Route
+              path='/myNotes'
+              element={
+                <Suspense fallback={<GridNoteSkeleton />}>
+                  <MyNotes />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path='/archivedNotes'
+              element={
+                <Suspense fallback={<GridNoteSkeleton />}>
+                  <ArchiveNotes />
+                </Suspense>
+              }
+            />
             <Route path='/createNote' element={<CreateNote />} />
             <Route path='/myNotes/:id' element={<EditNote />} />
           </Route>

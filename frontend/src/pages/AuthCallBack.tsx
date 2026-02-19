@@ -17,5 +17,5 @@ export default function AuthCallback() {
     }
   }, [searchParams, navigate]);
 
-  return <p className='text-gray-500 animate-pulse'>Autenticando...</p>;
+  return <></>;
 }
