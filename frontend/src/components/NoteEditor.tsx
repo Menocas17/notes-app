@@ -54,6 +54,7 @@ export default function NoteEditor({ initialData }: { initialData: Notes }) {
   };
 
   const handleArchive = (isActive: boolean) => {
+    setFormState((prev) => ({ ...prev, isActive: !isActive }));
     updateNoteAsync({ id: initialData.id, isActive: !isActive });
   };
 
