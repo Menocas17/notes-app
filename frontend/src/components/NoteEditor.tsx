@@ -4,22 +4,17 @@ import { useEffect, useRef } from 'react';
 import Note from './Note';
 import { type Notes } from '../types/types';
 import { Link, useNavigate } from 'react-router-dom';
-import { useNoteDetail } from '../hooks/useNoteDetail';
-import NoteSkeleton from './NoteSkeleton';
+import { useUpdateNote } from '../hooks/useUpdateNote';
+import { useDeleteNote } from '../hooks/useDeleteNote';
 
 export default function NoteEditor({ initialData }: { initialData: Notes }) {
   const [formState, setFormState] = useState(initialData);
   const debouncedForm = useDebounce(formState, 1500);
-  const [localLoading, setLocalLoading] = useState<boolean>(false);
+  const { mutate: updateNoteAsync, isPending: isUpdating } = useUpdateNote();
+  const { mutate: deleteNoteAsync } = useDeleteNote();
   const navigate = useNavigate();
-  const { loading } = useNoteDetail();
 
   const lastSavedData = useRef(initialData);
-
-  useEffect(() => {
-    setFormState(initialData);
-    lastSavedData.current = initialData;
-  }, [initialData.id, initialData]);
 
   useEffect(() => {
     const tagsChanged =
@@ -32,84 +27,35 @@ export default function NoteEditor({ initialData }: { initialData: Notes }) {
     if (!tagsChanged && !titleChanged && !contentChanged) {
       return;
     }
-    const editNote = async () => {
-      setLocalLoading(true);
-      const token = localStorage.getItem('token');
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/notes/${debouncedForm.id}`,
-          {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              title: debouncedForm.title,
-              content: debouncedForm.content,
-              tags: debouncedForm.tags
-                .map((t) => t.name)
-                .filter((name) => name.trim() !== ''),
-            }),
-          },
-        );
 
-        if (response.ok) {
+    updateNoteAsync(
+      {
+        id: debouncedForm.id,
+        title: debouncedForm.title,
+        content: debouncedForm.content,
+        tags: debouncedForm.tags
+          .map((t) => t.name)
+          .filter((name) => name.trim() !== ''),
+      },
+      {
+        onSuccess: () => {
           lastSavedData.current = debouncedForm;
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLocalLoading(false);
-      }
-    };
-
-    editNote();
-  }, [debouncedForm]);
-
-  const handleDelete = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar esta nota?'))
-      return;
-
-    const token = localStorage.getItem('token');
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/notes/${initialData.id}`,
-        {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` },
         },
-      );
+      },
+    );
+  }, [debouncedForm, updateNoteAsync]);
 
-      if (response.ok) {
-        navigate('/myNotes');
-      }
-    } catch (err) {
-      console.error('Error al borrar:', err);
-    }
+  const handleDelete = () => {
+    if (!window.confirm('Are you sure you want to delete this note?')) return;
+
+    deleteNoteAsync(initialData.id, {
+      onSuccess: () => navigate('/myNotes'),
+    });
   };
 
-  const handleArchive = async (isActive: boolean) => {
-    const token = localStorage.getItem('token');
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/notes/${initialData.id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ isActive: !isActive }),
-        },
-      );
-
-      if (response.ok) {
-        navigate('/myNotes');
-      }
-    } catch (err) {
-      console.error('Error al archivar:', err);
-    }
+  const handleArchive = (isActive: boolean) => {
+    setFormState((prev) => ({ ...prev, isActive: !isActive }));
+    updateNoteAsync({ id: initialData.id, isActive: !isActive });
   };
 
   return (
@@ -122,7 +68,7 @@ export default function NoteEditor({ initialData }: { initialData: Notes }) {
           <div className='flex items-center gap-2'>
             <h2 className='text-2xl font-bold leading-7'>Editing </h2>
             <span className='text-gray-400 text-xs'>
-              {localLoading ? '⚠️ Saving' : '✅ Saved'}
+              {isUpdating ? '⚠️ Saving' : '✅ Saved'}
             </span>
           </div>
         </div>
@@ -142,19 +88,16 @@ export default function NoteEditor({ initialData }: { initialData: Notes }) {
           </button>
         </div>
       </div>
-      {loading ? (
-        <NoteSkeleton edit={true} />
-      ) : (
-        <Note
-          note={formState}
-          disable={false}
-          onChangeTitle={(t) => setFormState((prev) => ({ ...prev, title: t }))}
-          onChangeContent={(c) =>
-            setFormState((prev) => ({ ...prev, content: c }))
-          }
-          onUpdateTags={(tags) => setFormState((prev) => ({ ...prev, tags }))}
-        />
-      )}
+
+      <Note
+        note={formState}
+        disable={false}
+        onChangeTitle={(t) => setFormState((prev) => ({ ...prev, title: t }))}
+        onChangeContent={(c) =>
+          setFormState((prev) => ({ ...prev, content: c }))
+        }
+        onUpdateTags={(tags) => setFormState((prev) => ({ ...prev, tags }))}
+      />
     </section>
   );
 }
