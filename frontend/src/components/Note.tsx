@@ -50,7 +50,7 @@ export default function Note({
 
   return (
     <article
-      className={`max-w-2xl mx-auto p-6 bg-gray-100 dark:bg-transparent rounded-lg shadow-sm border border-gray-200 dark:border-[0.5px] dark:border-primary ${disable ? 'h-70' : 'h-fit'}`}
+      className={`max-w-2xl mx-auto p-6 bg-gray-100 dark:bg-transparent rounded-lg shadow-sm border border-gray-200 dark:border-[0.5px] dark:border-primary ${disable ? 'h-70' : 'h-fit'} overflow-hidden`}
     >
       {disable ? (
         <p
@@ -78,26 +78,26 @@ export default function Note({
             },
           )}
         </time>
-        <div className='flex gap-1 items-center'>
+        <div className='flex flex-wrap gap-1 items-center'>
           {note.tags.map((tag, index) =>
             disable ? (
               <span
                 key={tag.id}
-                className='bg-yellow-100 dark:bg-yellow-200 text-yellow-700 dark:text-black px-2 py-0.5 rounded-full'
+                className='bg-yellow-100 dark:bg-yellow-200 text-yellow-700 dark:text-black px-2 py-0.5 rounded-full max-w-20 truncate'
               >
                 #{tag.name}
               </span>
             ) : (
               <div
                 key={tag.id}
-                className='flex items-center bg-yellow-100 dark:bg-yellow-200 px-2 py-0.5 rounded-full'
+                className='flex items-center bg-yellow-100 dark:bg-yellow-200 px-2 py-0.5 rounded-full '
               >
                 <span className='text-yellow-700 dark:text-black'>#</span>
                 <input
                   ref={index === note.tags.length - 1 ? lastTagRef : null}
                   value={tag.name}
                   onChange={(e) => handleTagChange(tag.id, e.target.value)}
-                  className='bg-transparent outline-none text-yellow-700 dark:text-black w-16 focus:w-24 transition-all'
+                  className='bg-transparent outline-none text-yellow-700 dark:text-black max-w-16 focus:w-24 transition-all truncate'
                   placeholder='tag...'
                   onBlur={() => handleTagBlur(tag.id, tag.name)}
                 />
