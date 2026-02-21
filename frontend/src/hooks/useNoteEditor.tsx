@@ -7,20 +7,22 @@ import { useNavigate } from 'react-router-dom';
 
 export default function useNoteEditor(initialData: Notes) {
   const [formData, setFormData] = useState<Notes>(initialData);
-  const debouncedForm = useDebounce(formData, 1000);
+  const debouncedForm = useDebounce(formData, 600);
   const { mutate: updateNoteAsync, isPending: isUpdating } = useUpdateNote();
   const { mutate: deleteNoteAsync } = useDeleteNote();
   const lastSavedData = useRef(initialData);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const tagsChanged =
+      debouncedForm.tags.length !== lastSavedData.current.tags.length ||
+      debouncedForm.tags.map((t) => t.name).join(',') !==
+        lastSavedData.current.tags.map((t) => t.name).join(',');
+
     const isDirty =
-      formData.title !== lastSavedData.current.title ||
-      formData.content !== lastSavedData.current.content ||
-      formData.tags.length !== lastSavedData.current.tags.length ||
-      formData.tags.some(
-        (tag, index) => tag.name !== lastSavedData.current.tags[index]?.name,
-      );
+      debouncedForm.title !== lastSavedData.current.title ||
+      debouncedForm.content !== lastSavedData.current.content ||
+      tagsChanged;
 
     if (!isDirty) return;
 
@@ -39,7 +41,7 @@ export default function useNoteEditor(initialData: Notes) {
         },
       },
     );
-  }, [debouncedForm, updateNoteAsync, formData]);
+  }, [debouncedForm, updateNoteAsync]);
 
   const updateField = (field: keyof Notes, value: string | boolean | Tag[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
