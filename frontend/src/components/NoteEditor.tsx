@@ -1,62 +1,11 @@
-import { useState } from 'react';
-import { useDebounce } from '../hooks/useDebounce';
-import { useEffect, useRef } from 'react';
 import Note from './Note';
 import { type Notes } from '../types/types';
-import { Link, useNavigate } from 'react-router-dom';
-import { useUpdateNote } from '../hooks/useUpdateNote';
-import { useDeleteNote } from '../hooks/useDeleteNote';
+import { Link } from 'react-router-dom';
+import useNoteEditor from '../hooks/useNoteEditor';
 
 export default function NoteEditor({ initialData }: { initialData: Notes }) {
-  const [formState, setFormState] = useState(initialData);
-  const debouncedForm = useDebounce(formState, 1500);
-  const { mutate: updateNoteAsync, isPending: isUpdating } = useUpdateNote();
-  const { mutate: deleteNoteAsync } = useDeleteNote();
-  const navigate = useNavigate();
-
-  const lastSavedData = useRef(initialData);
-
-  useEffect(() => {
-    const tagsChanged =
-      JSON.stringify(debouncedForm.tags) !==
-      JSON.stringify(lastSavedData.current.tags);
-    const titleChanged = debouncedForm.title !== lastSavedData.current.title;
-    const contentChanged =
-      debouncedForm.content !== lastSavedData.current.content;
-
-    if (!tagsChanged && !titleChanged && !contentChanged) {
-      return;
-    }
-
-    updateNoteAsync(
-      {
-        id: debouncedForm.id,
-        title: debouncedForm.title,
-        content: debouncedForm.content,
-        tags: debouncedForm.tags
-          .map((t) => t.name)
-          .filter((name) => name.trim() !== ''),
-      },
-      {
-        onSuccess: () => {
-          lastSavedData.current = debouncedForm;
-        },
-      },
-    );
-  }, [debouncedForm, updateNoteAsync]);
-
-  const handleDelete = () => {
-    if (!window.confirm('Are you sure you want to delete this note?')) return;
-
-    deleteNoteAsync(initialData.id, {
-      onSuccess: () => navigate('/myNotes'),
-    });
-  };
-
-  const handleArchive = (isActive: boolean) => {
-    setFormState((prev) => ({ ...prev, isActive: !isActive }));
-    updateNoteAsync({ id: initialData.id, isActive: !isActive });
-  };
+  const { formData, updateField, isUpdating, handleArchive, handleDelete } =
+    useNoteEditor(initialData);
 
   return (
     <section className='mb-5 mt-8 md:max-w-3/5 m-auto'>
@@ -82,21 +31,19 @@ export default function NoteEditor({ initialData }: { initialData: Notes }) {
           </button>
           <button
             className='font-bold  bg-primary hover:bg-yellow-500 text-black dark:text-[#e3e3e3] dark:border dark:border-primary dark:bg-[#242424] dark:hover:bg-primary dark:hover:text-black py-1 px-3 rounded-lg'
-            onClick={() => handleArchive(formState.isActive)}
+            onClick={() => handleArchive(formData.isActive)}
           >
-            {formState.isActive ? 'Archive' : 'Unarchive'}
+            {formData.isActive ? 'Archive' : 'Unarchive'}
           </button>
         </div>
       </div>
 
       <Note
-        note={formState}
+        note={formData}
         disable={false}
-        onChangeTitle={(t) => setFormState((prev) => ({ ...prev, title: t }))}
-        onChangeContent={(c) =>
-          setFormState((prev) => ({ ...prev, content: c }))
-        }
-        onUpdateTags={(tags) => setFormState((prev) => ({ ...prev, tags }))}
+        onChangeTitle={(t) => updateField('title', t)}
+        onChangeContent={(c) => updateField('content', c)}
+        onUpdateTags={(tags) => updateField('tags', tags)}
       />
     </section>
   );
