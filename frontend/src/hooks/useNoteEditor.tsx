@@ -14,10 +14,14 @@ export default function useNoteEditor(initialData: Notes) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const realTags = debouncedForm.tags.filter((tag) => tag.name.trim() !== '');
+    const realSavedTags = lastSavedData.current.tags.filter(
+      (tag) => tag.name.trim() !== '',
+    );
     const tagsChanged =
-      debouncedForm.tags.length !== lastSavedData.current.tags.length ||
-      debouncedForm.tags.map((t) => t.name).join(',') !==
-        lastSavedData.current.tags.map((t) => t.name).join(',');
+      realTags.length !== realSavedTags.length ||
+      realTags.map((t) => t.name).join(',') !==
+        realSavedTags.map((t) => t.name).join(',');
 
     const isDirty =
       debouncedForm.title !== lastSavedData.current.title ||
