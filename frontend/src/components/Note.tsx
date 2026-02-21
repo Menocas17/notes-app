@@ -48,6 +48,10 @@ export default function Note({
     }
   };
 
+  const displayedTags = disable ? note.tags.slice(0, 5) : note.tags;
+
+  const ellipsis = disable === true && note.tags.length > 5;
+
   return (
     <article
       className={`max-w-2xl mx-auto p-6 bg-gray-100 dark:bg-transparent rounded-lg shadow-sm border border-gray-200 dark:border-[0.5px] dark:border-primary ${disable ? 'h-70' : 'h-fit'} overflow-hidden`}
@@ -79,7 +83,7 @@ export default function Note({
           )}
         </time>
         <div className='flex flex-wrap gap-1 items-center'>
-          {note.tags.map((tag, index) =>
+          {displayedTags.map((tag, index) =>
             disable ? (
               <span
                 key={tag.id}
@@ -114,6 +118,7 @@ export default function Note({
               +
             </button>
           )}
+          {ellipsis ? '...' : ''}
         </div>
       </div>
       {disable ? (
