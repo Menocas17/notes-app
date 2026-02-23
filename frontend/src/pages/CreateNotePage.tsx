@@ -3,7 +3,7 @@ import useNoteCreator from '../hooks/useNoteCreator';
 import { Link } from 'react-router-dom';
 
 export default function CreateNote() {
-  const { formState, setFormState, isSaving } = useNoteCreator();
+  const { formState, setFormState, isSaving, isFirstSaving } = useNoteCreator();
 
   return (
     <section className='mb-5 mt-8 md:max-w-3/5 m-auto'>
@@ -18,7 +18,7 @@ export default function CreateNote() {
           <div className='flex items-center gap-2'>
             <h2 className='text-2xl font-bold leading-7'>New Note</h2>
             <span className='text-gray-400 text-xs'>
-              {isSaving ? '⚠️ Saving' : '✅ Saved'}
+              {isSaving ? '⚠️ Saving' : isFirstSaving ? 'Draft' : '✅ Saved'}
             </span>
           </div>
         </div>
