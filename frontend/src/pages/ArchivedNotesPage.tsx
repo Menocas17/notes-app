@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import useNotes from '../hooks/useNotes';
 
 export default function ArchivedNotes() {
+  //TODO - implement the filtering in this page to, and make the filters a global state with context
   const { notes } = useNotes(false);
 
   if (notes.length === 0) {

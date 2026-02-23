@@ -10,6 +10,8 @@ export default function DashboarLayout() {
     navigate('/');
   };
 
+  //TODO - implement a buttom to go from dark to light theme
+
   return (
     <div className='max-w-[90%] lg:max-w-5/6 m-auto'>
       <header className='flex flex-col mt-4 md:mt-10'>
