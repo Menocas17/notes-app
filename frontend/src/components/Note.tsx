@@ -71,7 +71,7 @@ export default function Note({
         />
       )}
 
-      <div className='flex flex-wrap items-center gap-3 mb-4 text-xs text-gray-600 dark:text-gray-200'>
+      <div className='flex flex-col justify-center gap-3 mb-4 text-xs text-gray-600 dark:text-gray-200'>
         <time>
           {new Date(note.updatedAt || note.createdAt).toLocaleDateString(
             'es-ES',
