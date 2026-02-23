@@ -23,6 +23,9 @@ export default function useNoteCreator() {
 
   const createdNoteId = useRef<string | null>(null);
 
+  const isFirstSaving = !debouncedForm.title;
+  console.log(isFirstSaving);
+
   const isSaving = isCreating || isUpdating;
 
   useEffect(() => {
@@ -49,5 +52,5 @@ export default function useNoteCreator() {
     }
   }, [debouncedForm, createNoteAsync, updateNoteAsync]);
 
-  return { formState, setFormState, isSaving };
+  return { formState, setFormState, isSaving, isFirstSaving };
 }
