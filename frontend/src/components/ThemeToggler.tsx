@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { type Theme } from '../context/ThemeContext';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 const themeOptions = ['light', 'dark', 'system'];
 
 export default function ThemeToggler() {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const dropdownRef = useClickOutside<HTMLDivElement>(() => {
+    setIsOpen(false);
+  });
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const newTheme = e.currentTarget.value as Theme;
@@ -15,7 +19,7 @@ export default function ThemeToggler() {
   };
 
   return (
-    <div className='relative inline-block leading-none '>
+    <div className='relative inline-block leading-none ' ref={dropdownRef}>
       <button
         onClick={() => {
           setIsOpen(!isOpen);
@@ -48,12 +52,15 @@ export default function ThemeToggler() {
                 key={option}
               >
                 <img
-                  src={
-                    theme === 'light'
-                      ? `/${option}BorderBlackIcon.svg`
-                      : `/${option}Icon.svg`
-                  }
+                  src={`/${option}BorderBlackIcon.svg`}
                   alt='Theme Icon'
+                  className='block dark:hidden'
+                />
+
+                <img
+                  src={`/${option}Icon.svg`}
+                  alt='Theme Icon'
+                  className='hidden dark:block'
                 />
                 {option}
               </button>
