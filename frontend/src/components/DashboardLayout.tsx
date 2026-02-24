@@ -27,13 +27,15 @@ export default function DashboarLayout() {
             </div>
           </div>
 
-          <ThemeToggler />
-          <button
-            onClick={handleLogout}
-            className='font-bold  bg-primary text-black hover:bg-yellow-500 dark:text-[#e3e3e3] dark:border dark:border-red-900 dark:bg-[#242424] dark:hover:bg-red-900 dark:hover:text-white py-1.5 px-3 rounded-lg'
-          >
-            Logout
-          </button>
+          <div className='flex items-center gap-4'>
+            <ThemeToggler />
+            <button
+              onClick={handleLogout}
+              className='font-bold  bg-primary text-black hover:bg-yellow-500 dark:text-[#e3e3e3] dark:border dark:border-red-900 dark:bg-[#242424] dark:hover:bg-red-900 dark:hover:text-white py-1.5 px-3 rounded-lg'
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* bg-[#3b3e3f] */}
