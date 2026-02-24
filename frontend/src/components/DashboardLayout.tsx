@@ -1,5 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggler from './ThemeToggler';
 
 export default function DashboarLayout() {
   const { user, logout } = useAuth();
@@ -26,6 +27,7 @@ export default function DashboarLayout() {
             </div>
           </div>
 
+          <ThemeToggler />
           <button
             onClick={handleLogout}
             className='font-bold  bg-primary text-black hover:bg-yellow-500 dark:text-[#e3e3e3] dark:border dark:border-red-900 dark:bg-[#242424] dark:hover:bg-red-900 dark:hover:text-white py-1.5 px-3 rounded-lg'
