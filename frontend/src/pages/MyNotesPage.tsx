@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import useNotes from '../hooks/useNotes';
 import { useState, useMemo } from 'react';
 
+//TODO - Add video tutotial for new users showing how to create their first node and display it if no notes are created.
+
 export default function MyNotes() {
   const { notes } = useNotes(true);
   const [filters, setFilters] = useState({
